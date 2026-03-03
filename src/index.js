@@ -53,9 +53,22 @@ app.post('/convert', async (req, res) => {
     return res.status(200).json({ url });
   } catch (err) {
     console.error('Convert error:', err);
+
+    const is404 =
+      err.response?.status === 404 ||
+      err.code === 404 ||
+      (err.code && String(err.code).includes('404')) ||
+      (err.message && err.message.includes('Not Found'));
+    let message = err.message;
+    if (is404) {
+      message =
+        'Bucket not found (404). Check that GCS_BUCKET_NAME is correct, the bucket exists, ' +
+        'and it is in the same project (set GOOGLE_CLOUD_PROJECT or GCP_PROJECT if needed).';
+    }
+
     return res.status(500).json({
       error: 'Conversion or upload failed',
-      message: err.message,
+      message,
     });
   }
 });

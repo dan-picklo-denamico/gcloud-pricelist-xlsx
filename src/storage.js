@@ -1,6 +1,7 @@
 const { Storage } = require('@google-cloud/storage');
 
 const SIGNED_URL_MINUTES = parseInt(process.env.GCS_SIGNED_URL_MINUTES || '0', 10);
+const PROJECT_ID = process.env.GOOGLE_CLOUD_PROJECT || process.env.GCP_PROJECT;
 
 /**
  * Upload string content to GCS and return the URL of the object.
@@ -12,7 +13,8 @@ const SIGNED_URL_MINUTES = parseInt(process.env.GCS_SIGNED_URL_MINUTES || '0', 1
  * @returns {Promise<string>} - URL to access the uploaded object
  */
 async function uploadToGcs(bucketName, objectName, content, contentType = 'text/csv') {
-  const storage = new Storage();
+  const options = PROJECT_ID ? { projectId: PROJECT_ID } : {};
+  const storage = new Storage(options);
   const bucket = storage.bucket(bucketName);
   const file = bucket.file(objectName);
 

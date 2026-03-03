@@ -48,6 +48,7 @@ If `GCS_SIGNED_URL_MINUTES` is set (see below), `url` is a signed URL for privat
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `GCS_BUCKET_NAME` or `CLOUD_STORAGE_BUCKET` | Yes | GCS bucket where CSV files are written. |
+| `GOOGLE_CLOUD_PROJECT` or `GCP_PROJECT` | No | GCP project ID where the bucket lives. **Set this if you get "Not Found" (404)**—e.g. on Cloud Run this is usually set automatically. |
 | `GCS_SIGNED_URL_MINUTES` | No | If set to a number > 0, the returned `url` is a signed URL valid for that many minutes (use for private buckets). |
 | `PORT` | No | HTTP port (default `8080`). |
 
