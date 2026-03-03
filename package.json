@@ -1,0 +1,17 @@
+{
+  "name": "price-list-xlsx-to-csv",
+  "version": "1.0.0",
+  "description": "Convert sheet JSON to CSV and upload to Google Cloud Storage",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@google-cloud/storage": "^7.14.0",
+    "express": "^4.21.0"
+  }
+}
