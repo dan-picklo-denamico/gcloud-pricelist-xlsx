@@ -1,5 +1,5 @@
 const express = require('express');
-const { rowsToCsv } = require('./csv');
+const { sheetsToXlsx } = require('./xlsx');
 const { uploadToGcs } = require('./storage');
 
 const app = express();
@@ -20,7 +20,7 @@ if (!BUCKET_NAME) {
  *     { "sheetName": "Data", "data": { "rows": [ [], ["Name","Create Date",...], ... ] } }
  *   ]
  * }
- * Output: CSV file stored in GCS, response { "url": "https://storage.googleapis.com/..." }
+ * Output: XLSX file stored in GCS, response { "url": "https://storage.googleapis.com/..." }
  */
 app.post('/convert', async (req, res) => {
   try {
@@ -37,18 +37,16 @@ app.post('/convert', async (req, res) => {
       return res.status(500).json({ error: 'GCS bucket not configured (set GCS_BUCKET_NAME)' });
     }
 
-    // Use first sheet's rows; multiple sheets could be concatenated here if needed
     const firstSheet = sheets[0];
-    const rows = firstSheet?.data?.rows;
-    if (!Array.isArray(rows)) {
+    if (!Array.isArray(firstSheet?.data?.rows)) {
       return res.status(400).json({ error: 'First sheet must have data.rows (array)' });
     }
 
-    const csv = rowsToCsv(rows);
-    const baseName = filename.replace(/\.csv$/i, '');
-    const objectName = `${baseName}.csv`;
+    const buffer = await sheetsToXlsx(sheets);
+    const baseName = filename.replace(/\.(csv|xlsx)$/i, '');
+    const objectName = `${baseName}.xlsx`;
 
-    const url = await uploadToGcs(BUCKET_NAME, objectName, csv);
+    const url = await uploadToGcs(BUCKET_NAME, objectName, buffer);
 
     return res.status(200).json({ url });
   } catch (err) {
